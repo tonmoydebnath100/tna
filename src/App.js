@@ -16,8 +16,9 @@ function App() {
         element: <Home></Home>
       },
       {
-        path: '/tna',
+        path: '/:style',
         element: <Dashborad></Dashborad>,
+        loader: ({params})=> fetch(`http://localhost:5000/details/${params.style}`)
         
       },
     ],

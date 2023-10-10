@@ -14,7 +14,10 @@ const Home = () => {
       const buyertname=form.buyertname.value;
       const quantity=form.quantity.value;
       const style=form.style.value;
+      const shipdate=form.shipdate.value;
+      const plandate=form.plandate.value;
       const merchant=form.merchant.value;
+      const prod=form.prod.value;
       const description=form.description.value;
       const data={
         buyertname,
@@ -22,8 +25,9 @@ const Home = () => {
         style,
         merchant,
         description,
-        shipselectedDay,
-        planselectedDay
+        prod,
+        shipdate,
+        plandate
       }
       console.log(data);
       fetch('http://localhost:5000/infodata',{
@@ -36,7 +40,7 @@ const Home = () => {
       .then(res=>res.json())
       .then(data=>{
         console.log(data);
-        navigate('/tna', { replace: true });
+        navigate(`/${style}`, { replace: true });
         
       })
       form.reset();
@@ -46,7 +50,6 @@ const Home = () => {
       
     }
 
-    const today = new Date();
     const [shipselectedDay, setShipselectedDay] = useState(new Date());
     const [planselectedDay, setPlanselectedDay] = useState(new Date());
     
@@ -135,6 +138,20 @@ const Home = () => {
                 />
               </div>
             </div>
+            <div className="sm:col-span-full">
+              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                PROD/DAY
+              </label>
+              <div className="mt-2">
+                <input
+                  id="phone"
+                  name="prod"
+                  type="number"
+                  autoComplete="phone"
+                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
             
             <div className="sm:col-span-3">
               <label htmlFor="email" className="block text-sm font-bold leading-6 text-blue-900">
@@ -154,7 +171,7 @@ const Home = () => {
                   name="shipdate"
                   type="text"
                   readOnly
-                  value={format(shipselectedDay, 'PP')}
+                  value={format(shipselectedDay, 'dd/MM/yyyy')}
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -177,25 +194,12 @@ const Home = () => {
                   name="plandate"
                   type="text"
                   readOnly
-                  value={format(planselectedDay, 'PP')}
+                  value={format(planselectedDay, 'dd/MM/yyyy')}
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
-            <div className="sm:col-span-3">
-              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-                PROD/DAY
-              </label>
-              <div className="mt-2">
-                <input
-                  id="phone"
-                  name="merchant"
-                  type="number"
-                  autoComplete="phone"
-                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-            </div>
+            
 
             
 
