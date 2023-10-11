@@ -161,9 +161,7 @@ const Home = () => {
                 mode="single"
                 required
                 selected={shipselectedDay}
-                onSelect={setShipselectedDay}
-                
-                
+                onSelect={setShipselectedDay} 
             />
               <div className="mt-2">
                 <input
@@ -185,8 +183,6 @@ const Home = () => {
                 required
                 selected={planselectedDay}
                 onSelect={setPlanselectedDay}
-                
-                
             />
               <div className="mt-2">
                 <input
