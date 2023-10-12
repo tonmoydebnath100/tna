@@ -1,4 +1,4 @@
-import { addBusinessDays, addDays, differenceInCalendarDays, differenceInDays, format, parse, parseISO, subBusinessDays, subDays, toDate } from 'date-fns';
+import { addBusinessDays, addDays, compareAsc, differenceInCalendarDays, differenceInDays, format, isFriday, parse, parseISO, subBusinessDays, subDays, toDate } from 'date-fns';
 import React, { useEffect, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import { DayPicker } from 'react-day-picker';
@@ -27,6 +27,7 @@ const Dashborad = () => {
       const [faw, setfaw] = useState('');
       const [aaw, setaaw] = useState('');
       const [leadday, setleadday] = useState(0);
+      const [leaddayAsPlan, setleaddayAsPlan] = useState(0);
       const [fsend, setfsend] = useState('');
       const [fcmt, setfcmt] = useState('');
       const [fabcmt, setfabcmt] = useState('');
@@ -60,7 +61,53 @@ const Dashborad = () => {
       const [cuttingD, setcuttingD] = useState('OK');
       const [ssD, setssD] = useState(1);
       const [testD, settestD] = useState(4);
+
+      const [Donestartdate, setDonestartdate] = useState('');
+      const [DoneFitS, setDoneFitS] = useState('');
+      const [DoneFaw, setDoneFaw] = useState('');
+      const [DoneAaw, setDoneAaw] = useState('');
+      const [DoneFabsend, setDoneFabsend] = useState('');
+      const [DoneFcmt, setDoneFcmt] = useState('');
+      const [DoneFabcmt, setDoneFabcmt] = useState('');
+      const [DoneAsend, setDoneAsend] = useState('');
+      const [DoneAcmt, setDoneAcmt] = useState('');
+      const [Donefb, setDonefb] = useState('');
+      const [Donefhouse, setDonefhouse] = useState('');
+      const [DoneAbooking, setDoneAbooking] = useState('');
+      const [Doneppsend, setDoneppsend] = useState('');
+      const [Doneppcmt, setDoneppcmt] = useState('');
+      const [Donecutting, setDonecutting] = useState('');
+      const [Doness, setDoness] = useState('');
+      const [Donetest, setDonetest] = useState('');
+      const [Donesf, setDonesf] = useState('');
+      const [Donef, setDonef] = useState('');
+      const [Donefri, setDonefri] = useState('');
+      const [Doneexfri, setDoneexfri] = useState('');
+
       
+      function SubtractBussinessdays(from,Days){
+        let i=0,newDate=from;
+        Days++;
+        while(i<=Days){
+          if(isFriday(newDate)){
+            Days++;
+          }
+          newDate=subDays(newDate,1);
+          i++;
+        }
+        return newDate;
+      }
+      function additionBussinessdays(from,Days){
+        let i=0,newDate=from;
+        while(i!==Days){
+          if(isFriday(newDate)){
+            Days++;
+          }
+          newDate=addDays(newDate,1);
+          i++;
+        }
+        return newDate;
+      }
       useEffect(() => {
         if(startDate!==''){
         var a = shipdate.split("/");
@@ -145,7 +192,7 @@ const Dashborad = () => {
         if(SewingStart!==''){
           const result15= addDays(SewingStart, testD);
         settest(result15);
-        const result16= addDays(SewingStart, Math.ceil(quantity/prod));
+        const result16= additionBussinessdays(SewingStart, Math.ceil(quantity/prod));
         setSewingFinish(result16);
         }
       },[SewingStart,testD])
@@ -168,13 +215,33 @@ const Dashborad = () => {
         }
       },[Fri])
       useEffect(()=>{
+        if(exFri!=='' && startDate!==''){
+          
+        const leadday=differenceInDays(exFri,startDate);
+        setleaddayAsPlan(leadday);
+        }
+      },[exFri,startDate])
+      useEffect(()=>{
         if(plandate!==''){
           var arr = plandate.split("/");
-          const result13= subBusinessDays(new Date(arr[2],(arr[1]-1),arr[0]),Math.ceil(quantity/prod));
+          const result13= SubtractBussinessdays(new Date(arr[2],(arr[1]-1),arr[0]),Math.ceil(quantity/prod));
           setcutting(result13);
+          
           
         }
       },[plandate])
+      useEffect(()=>{
+        if(Donefhouse!==''){
+          if(compareAsc(Donefhouse,cutting)===-1){
+            setcuttingD('OK');
+          }
+          else{
+            setcuttingD('Fabric Is Not In House');
+          }
+          
+          
+        }
+      },[Donefhouse])
       
      
     return (
@@ -220,7 +287,9 @@ const Dashborad = () => {
               </div>
               <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt class="text-xs ms-3 font-medium leading-6 text-gray-900">LEAD TIME AS PLAN</dt>
-                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{leadday} days</dd>
+                <dd class="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">{(leadday>=leaddayAsPlan)?
+                <h1 className='text-green-600 font-bold'>{leaddayAsPlan} Days</h1>:<h1 className='text-red-600 font-bold'>{leaddayAsPlan} Days</h1>  
+              }</dd>
               </div>
               <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt class="text-xs ms-3 font-medium leading-6 text-gray-900">Acctual Ex-Factory</dt>
@@ -249,7 +318,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={startDate} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td>{leadday} days</td> 
-                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donestartdate} onChange={(date) => setDonestartdate(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -257,7 +326,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={fitsample} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td> <DatePicker selected={fitsampleDays} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setfitsampleDays(date)}  /></td> 
-                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneFitS} onChange={(date) => setDoneFitS(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -265,7 +334,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={faw} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><input value={fawD} onChange={e => setfawD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneFaw} onChange={(date) => setDoneFaw(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -273,7 +342,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={aaw} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><input value={aawD} onChange={e => setaawD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker  placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneAaw} onChange={(date) => setDoneAaw(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -281,7 +350,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={fsend} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><DatePicker selected={fsendDays} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setfsendDays(date)}  /></td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneFabsend} onChange={(date)=> setDoneFabsend(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -289,7 +358,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={fcmt} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><input value={fitcmtD} onChange={e => setfitcmtD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneFcmt} onChange={(date)=> setDoneFcmt(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -297,7 +366,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={fabcmt} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><input value={fcmtD} onChange={e => setfcmtD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneFabcmt} onChange={(date)=> setDoneFabcmt(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -305,7 +374,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={acca} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><input value={asendD} onChange={e => setasendD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneAsend} onChange={(date)=> setDoneAsend(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -313,7 +382,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={accmt} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setStartDate(date)}  /></td> 
                     
                     <td><input value={acmtD} onChange={e => setacmtD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneAcmt} onChange={(date)=> setDoneAcmt(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -321,7 +390,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={fb} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setfb(date)}  /></td> 
                     
                     <td><input value={fbD} onChange={e => setfbD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donefb} onChange={(date)=> setDonefb(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -329,7 +398,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={fhouse} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setfhouse(date)}  /></td> 
                     
                     <td><input value={fhouseD} onChange={e => setfhouseD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donefhouse} onChange={(date)=> setDonefhouse(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -337,7 +406,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={accbooking} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setaccbooking(date)}  /></td> 
                     
                     <td><input value={abD} onChange={e => setabD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={DoneAbooking} onChange={(date)=> setDoneAbooking(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -345,7 +414,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={ppsend} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setppsend(date)}  /></td> 
                     
                     <td><input value={ppsendD} onChange={e => setppsendD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Doneppsend} onChange={(date)=> setDoneppsend(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -353,15 +422,18 @@ const Dashborad = () => {
                     <td> <DatePicker selected={ppcmt} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setppcmt(date)}  /></td> 
                     
                     <td><input value={ppcmtD} onChange={e => setppcmtD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Doneppcmt} onChange={(date)=> setDoneppcmt(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
                     <td>Cutting</td>
                     <td> <DatePicker selected={cutting} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setcutting(date)}  /></td> 
                     
-                    <td><h1 className='text-green-600 font-bold'>{cuttingD}</h1></td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td>{
+                      (cuttingD==='OK')? <h1 className='text-green-600 font-bold'>{cuttingD}</h1>:
+                      <h1 className='text-red-600 font-bold'>{cuttingD}</h1>
+                      }</td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donecutting} onChange={(date)=> setDonecutting(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -369,7 +441,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={SewingStart} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setSewingStart(date)}  /></td> 
                     
                     <td><input value={ssD} onChange={e => setssD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Doness} onChange={(date)=> setDoness(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -377,7 +449,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={test} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => settest(date)}  /></td> 
                     
                     <td><input value={testD} onChange={e => settestD(e.target.value)}  className='w-10 px-1' /> days</td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donetest} onChange={(date)=> setDonetest(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -385,7 +457,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={SewingFinish} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setSewingFinish(date)}  /></td> 
                     
                     <td></td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donesf} onChange={(date)=> setDonesf(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -393,7 +465,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={Finish} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setFinish(date)}  /></td> 
                     
                     <td></td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donef} onChange={(date)=> setDonef(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -401,7 +473,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={Fri} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setFri(date)}  /></td> 
                     
                     <td></td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Donefri} onChange={(date)=> setDonefri(date)}  /></td> 
                   </tr>
                   <tr>
                     <th>{++i}</th> 
@@ -409,7 +481,7 @@ const Dashborad = () => {
                     <td> <DatePicker selected={exFri} placeholderText="select a date" dateFormat="dd/MM/yyyy" onChange={(date) => setexFri(date)}  /></td> 
                     
                     <td></td> 
-                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy"   /></td> 
+                    <td><DatePicker placeholderText="select a date" dateFormat="dd/MM/yyyy" selected={Doneexfri} onChange={(date)=> setDoneexfri(date)}  /></td> 
                   </tr>
                 
             </tbody> 
