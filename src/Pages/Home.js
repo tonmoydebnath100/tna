@@ -30,7 +30,7 @@ const Home = () => {
         plandate
       }
       console.log(data);
-      fetch('http://localhost:5000/infodata',{
+      fetch('https://tna-server.vercel.app/infodata',{
       method:'POST',
       headers:{
         'content-type':'application/json'

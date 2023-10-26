@@ -7,10 +7,10 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-import { useLoaderData } from 'react-router-dom';
+import { Link, useLoaderData } from 'react-router-dom';
 
-const Dashborad = () => {
-      const {
+const Saveddashboard = () => {
+    const {
         buyertname,
         quantity,
         style,
@@ -19,10 +19,32 @@ const Dashborad = () => {
         shipdate,
         plandate,
         prod,
+        startDate:start,
+        Donestartdate:Dstartdate,
+          DoneFitS:DFitS,
+          DoneFaw:DFaw,
+          DoneAaw:DAaw,
+          DoneFabsend:DFabsend,
+          DoneFcmt:DFcmt,
+          DoneFabcmt:DFabcmt,
+          DoneAsend:DAsend,
+          DoneAcmt:DAcmt,
+          Donefb:Dfb,
+          Donefhouse:Dfhouse,
+          DoneAbooking:DAbooking,
+          Doneppsend:Dppsend,
+          Doneppcmt:Dppcmt,
+          Donecutting:Dcutting,
+          Doness:Dss,
+          Donetest:Dtest,
+          Donesf:Dsf,
+          Donef:Df,
+          Donefri:Dfri,
+          Doneexfri:Dexfri
         
       }=useLoaderData();
       let i=0;
-      const [startDate, setStartDate] = useState('');
+      const [startDate, setStartDate] = useState((start!=='')? new Date(start):start);
       const [fitsample, setFitsample] = useState('');
       const [faw, setfaw] = useState('');
       const [aaw, setaaw] = useState('');
@@ -62,27 +84,27 @@ const Dashborad = () => {
       const [ssD, setssD] = useState(1);
       const [testD, settestD] = useState(4);
 
-      const [Donestartdate, setDonestartdate] = useState('');
-      const [DoneFitS, setDoneFitS] = useState('');
-      const [DoneFaw, setDoneFaw] = useState('');
-      const [DoneAaw, setDoneAaw] = useState('');
-      const [DoneFabsend, setDoneFabsend] = useState('');
-      const [DoneFcmt, setDoneFcmt] = useState('');
-      const [DoneFabcmt, setDoneFabcmt] = useState('');
-      const [DoneAsend, setDoneAsend] = useState('');
-      const [DoneAcmt, setDoneAcmt] = useState('');
-      const [Donefb, setDonefb] = useState('');
-      const [Donefhouse, setDonefhouse] = useState('');
-      const [DoneAbooking, setDoneAbooking] = useState('');
-      const [Doneppsend, setDoneppsend] = useState('');
-      const [Doneppcmt, setDoneppcmt] = useState('');
-      const [Donecutting, setDonecutting] = useState('');
-      const [Doness, setDoness] = useState('');
-      const [Donetest, setDonetest] = useState('');
-      const [Donesf, setDonesf] = useState('');
-      const [Donef, setDonef] = useState('');
-      const [Donefri, setDonefri] = useState('');
-      const [Doneexfri, setDoneexfri] = useState('');
+      const [Donestartdate, setDonestartdate] = useState((Dstartdate!=='')? new Date(Dstartdate):Dstartdate);
+      const [DoneFitS, setDoneFitS] = useState((DFitS!=='')? new Date(DFitS):DFitS);
+      const [DoneFaw, setDoneFaw] = useState((DFaw!=='')? new Date(DFaw):DFaw);
+      const [DoneAaw, setDoneAaw] = useState((DAaw!=='')? new Date(DAaw):DAaw);
+      const [DoneFabsend, setDoneFabsend] = useState((DFabsend!=='')? new Date(DFabsend):DFabsend);
+      const [DoneFcmt, setDoneFcmt] = useState((DFcmt!=='')? new Date(DFcmt):DFcmt);
+      const [DoneFabcmt, setDoneFabcmt] = useState((DFabcmt!=='')? new Date(DFabcmt):DFabcmt);
+      const [DoneAsend, setDoneAsend] = useState((DAsend!=='')? new Date(DAsend):DAsend);
+      const [DoneAcmt, setDoneAcmt] = useState((DAcmt!=='')? new Date(DAcmt):DAcmt);
+      const [Donefb, setDonefb] = useState((Df!=='')? new Date(Df):Df);
+      const [Donefhouse, setDonefhouse] = useState((Dfhouse!=='')? new Date(Dfhouse):Dfhouse);
+      const [DoneAbooking, setDoneAbooking] = useState((DAbooking!=='')? new Date(DAbooking):DAbooking);
+      const [Doneppsend, setDoneppsend] = useState((Dppsend!=='')? new Date(Dppsend):Dppsend);
+      const [Doneppcmt, setDoneppcmt] = useState((Dppcmt!=='')? new Date(Dppcmt):Dppcmt);
+      const [Donecutting, setDonecutting] = useState((Dcutting!=='')? new Date(Dcutting):Dcutting);
+      const [Doness, setDoness] = useState((Dss!=='')? new Date(Dss):Dss);
+      const [Donetest, setDonetest] = useState((Dtest!=='')? new Date(Dtest):Dtest);
+      const [Donesf, setDonesf] = useState((Dsf!=='')? new Date(Dsf):Dsf);
+      const [Donef, setDonef] = useState((Df!=='')? new Date(Df):Df);
+      const [Donefri, setDonefri] = useState((Dfri!=='')? new Date(Dfri):Dfri);
+      const [Doneexfri, setDoneexfri] = useState((Dexfri!=='')? new Date(Dexfri):Dexfri);
 
       
       function SubtractBussinessdays(from,Days){
@@ -283,16 +305,16 @@ const Dashborad = () => {
       })
 
       }
-     
     return (
-      <>
+        <>
       <div className="navbar bg-base-300">
        
         <div className='navbar-start'>
           <a className=" btn btn-ghost normal-case text-xl">W. Apparels Ltd.</a>
         </div>
         <div className='navbar-end'>
-          <button onClick={handleSubmit} className='btn btn-primary'>Create</button>
+          <Link to='/'><button  className='btn btn-ghost mx-2'>Cancel</button></Link>
+          <button onClick={handleSubmit} className='btn btn-primary mx-2'>Save</button>
         </div>
         
       </div>
@@ -553,4 +575,4 @@ const Dashborad = () => {
     );
 };
 
-export default Dashborad;
+export default Saveddashboard;
